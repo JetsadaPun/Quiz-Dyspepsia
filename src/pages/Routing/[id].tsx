@@ -12,45 +12,33 @@ interface QuizProps {
 const questions = [
     {
         id: 1,
-        question: 'How do you behave when eating?',
-        options: ['Chew thoroughly', 'Chew quickly'],
-        image: "/q1.png"
-    },
-    {
-        id: 2,
-        question: 'Do you stomachache when you are Hungry?',
-        options: ['No,I do not ', 'Sometimes', 'Yes,I do'],
+        question: 'ปวดท้องตอนหิวบ่อยแค่ไหน ?',
+        options: ['ไม่ฉันไม่เคยปวดท้องตอนหิว', 'บางครั้ง', 'ใช่ฉันเคยปวด'],
         image: '/q2.png'
     },
     {
-        id: 3,
-        question: 'How often do you eat meals at irregular times per week?',
-        options: ['2-4 times per week', '5-7 times per week', 'I always eat on time'],
+        id: 2,
+        question: 'รับประทานอาหารไม่ตรงเวลาบ่อยแค่ไหนต่อสัปดาห์ ?',
+        options: ['2-4 ครั้ง ต่อสัปดาห์', '5-7 ครั้ง ต่อสัปดาห์', 'รับประทานอาหารตรงเวลาเสมอ'],
         image: '/q3.png'
     },
     {
-        id: 4,
-        question: 'Have you felt bored of food or not wanted to eat at all this week?',
-        options: ['No,I have not', '1-3 times', 'more than 3 times'],
-        image: '/q4.png'
+        id: 3,
+        question: 'รับประทานอาหารรสเปรี้ยวจัดหรือเผ็ดจัดเป็นประจำหรือไม่ ?',
+        options: ['ใช่', 'ไม่'],
+        image: '/q7.png'
     },
     {
-        id: 5,
-        question: 'Do you consume caffeine or alcohol?',
-        options: ['I always drink everyday', 'I drink one per week-per month'],
+        id: 4,
+        question: 'รับประทานคาเฟอีนหรือแอลกอฮอล์หรือไม่ ?',
+        options: ['ไม่ดื่มคาเฟอีนหรือแอลกอฮอล์เลย', 'ดื่มทุกวัน', 'รับประทานอาทิตย์ละครั้ง'],
         image: '/q5.png'
     },
     {
-        id: 6,
-        question: 'How many meals do you eat in a day?',
-        options: ['1-2 meals', '3 meals', 'More than 3 meals'],
-        image: '/q6.png'
-    },
-    {
-        id: 7,
-        question: 'Do you usually prefer strongly flavored foods, such as sour or spicy?',
-        options: ['Yes,I do', 'No,I do not'],
-        image: '/q7.png'
+        id: 5,
+        question: 'สัปดาห์นี้เบื่ออาหารหรือไม่อยากอาหารหรือไม่ ?',
+        options: ['ไม่มีเลย', '1-3 ครั้ง', 'มากกว่า 3 ครั้ง'],
+        image: '/q4.png'
     },
 ];
 
@@ -59,32 +47,76 @@ export default function Quiz() {
     const { id } = router.query;
     const [questionData, setQuestionData] = useState<QuizProps | null>(null);
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
+    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
     const [progressWidth, setProgressWidth] = useState("0%");
+    const [result, setResult] = useState<string>("ไม่มีอะไร");
 
     const click = () => {
+        if (selectedOptions.length <= 5 && questionData!) {
+            setSelectedOptions([...selectedOptions, questionData?.options[selectedOption!]]);
+            console.log(selectedOptions)
+        }
         console.log("Selected Option:", questionData?.options[selectedOption!]);
-        setProgressWidth("100%");
-        if (id != "7") {
-            router.push({
-                pathname: `/Routing/${questionData!.id + 1}`,
-                query: { id: `${questionData!.id + 1}` }
-            });
-            const newProgressWidth = `${((parseInt(id as string)) / questions.length) * 100}%`;
-            setProgressWidth(newProgressWidth);
-        } else {
+        if (selectedOptions.length === 5) {
+            console.log("5");
+            if (selectedOptions[0] == "บางครั้ง") {
+                console.log(selectedOptions[0]);
+                if (selectedOptions[1] == "2-4 ครั้ง ต่อสัปดาห์") {
+                    setResult("No");
+                } else if (selectedOptions[1] == "5-7 ครั้ง ต่อสัปดาห์") {
+                    if (selectedOptions[2] == "ใช่") {
+                        if (selectedOptions[3] == "ไม่ดื่มคาเฟอีนหรือแอลกอฮอล์เลย") {
+                            setResult("No")
+                        } else if (selectedOptions[3] == "ดื่มทุกวัน") {
+                            setResult("Yes")
+                        } else if (selectedOptions[3] == "รับประทานอาทิตย์ละครั้ง") {
+                            if (selectedOptions[4] == "ไม่มีเลย") {
+                                setResult("No");
+                            } else if (selectedOptions[4] == "1-3 ครั้ง" || selectedOptions[4] == "มากกว่า 3 ครั้ง") {
+                                setResult("Yes");
+                            }
+                        }
+                    } else if (selectedOptions[2] == "ไม่") {
+                        setResult("No");
+                    }
+                } else if (selectedOptions[1] == "รับประทานอาหารตรงเวลาเสมอ") {
+                    setResult("Yes");
+                }
+            } else if (selectedOptions[0] == "ไม่ฉันไม่เคยปวดท้องตอนหิว") {
+                console.log(selectedOptions[0]);
+                setResult("No");
+                console.log("result = ", result);
+
+            } else if (selectedOptions[0] == "ใช่ฉันเคยปวด") {
+                console.log(selectedOptions[0]);
+                setResult("Yes");
+                console.log("result = ", result);
+            }
+
+            console.log("result 5 = ", result);
+
             Swal.fire({
                 title: "Good job!",
                 text: "You clicked the button!",
                 icon: "success",
                 showCancelButton: true,
-                confirmButtonText: "Success!",
                 cancelButtonText: "Back to home page!",
+
             }).then((result) => {
                 if (result.dismiss) {
                     router.push(`/`);
                 }
             });
         }
+
+        if (id != "5") {
+            router.push({
+                pathname: `/Routing/${questionData!.id + 1}`,
+                query: { id: `${questionData!.id + 1}`, answers: encodeURIComponent(selectedOptions.join(',')) }
+            });
+        }
+        const newProgressWidth = `${((selectedOptions.length + 1) / questions.length) * 100}%`;
+        setProgressWidth(newProgressWidth);
     }
 
     useEffect(() => {
@@ -100,7 +132,7 @@ export default function Quiz() {
             <div className="w-full bg-gray-200 rounded-full h-6 dark:bg-gray-700" >
                 <div className="bg-green-500 h-6 rounded-full" style={{ width: progressWidth }}></div>
             </div>
-            <div className="grid grid-cols-2 gap-8 w-full h-full bg-blue-200 p-16 shadow-lg">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-8 w-full h-full bg-blue-200 p-4 lg:p-16">
                 <div className="bg-white p-4 shadow-lg rounded-lg flex items-center justify-center">
                     {questionData && typeof questionData.image === 'string' && (
                         <img src={questionData.image} className="object-cover" alt="Question Image" />
