@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath:"/kapor-quiz/",
-  output:'export',
+  output: "export",
   reactStrictMode: true,
 };
 
