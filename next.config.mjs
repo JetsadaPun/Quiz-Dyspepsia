@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: "/Quiz-Dyspepsia",
+  basePath: "/quiz-dyspepsia",
   output: "export",
   reactStrictMode: true,
 };
