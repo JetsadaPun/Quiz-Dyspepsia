@@ -12,8 +12,8 @@ interface QuizProps {
 const questions = [
     {
         id: 1,
-        question: 'ปวดท้องตอนหิวบ่อยแค่ไหน ?',
-        options: ['ไม่ฉันไม่เคยปวดท้องตอนหิว', 'บางครั้ง', 'ใช่ฉันเคยปวด'],
+        question: 'เมื่อคุณท้องว่างมีอาการปวดท้องหรือไม่ ?',
+        options: ['ไม่มีอาการเลย', 'มีอาการบางครั้ง', 'มีอาการ'],
         image: '/q2.png'
     },
     {
@@ -49,7 +49,7 @@ export default function Quiz() {
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
     const [progressWidth, setProgressWidth] = useState("0%");
-    const [result, setResult] = useState<string>("ไม่มีอะไร");
+    const [results, setResult] = useState<boolean>();
 
     const click = () => {
         if (selectedOptions.length <= 5 && questionData!) {
@@ -58,61 +58,42 @@ export default function Quiz() {
         }
         console.log("Selected Option:", questionData?.options[selectedOption!]);
         if (selectedOptions.length === 5) {
-            console.log("5");
-            if (selectedOptions[0] == "บางครั้ง") {
-                console.log(selectedOptions[0]);
-                if (selectedOptions[1] == "2-4 ครั้ง ต่อสัปดาห์") {
-                    setResult("No");
-                } else if (selectedOptions[1] == "5-7 ครั้ง ต่อสัปดาห์") {
-                    if (selectedOptions[2] == "ใช่") {
-                        if (selectedOptions[3] == "ไม่ดื่มคาเฟอีนหรือแอลกอฮอล์เลย") {
-                            setResult("No")
-                        } else if (selectedOptions[3] == "ดื่มทุกวัน") {
-                            setResult("Yes")
-                        } else if (selectedOptions[3] == "รับประทานอาทิตย์ละครั้ง") {
-                            if (selectedOptions[4] == "ไม่มีเลย") {
-                                setResult("No");
-                            } else if (selectedOptions[4] == "1-3 ครั้ง" || selectedOptions[4] == "มากกว่า 3 ครั้ง") {
-                                setResult("Yes");
+            if (selectedOptions[0] === "มีอาการบางครั้ง") {
+                if (selectedOptions[1] === "2-4 ครั้ง ต่อสัปดาห์") {
+                    setResult(false);
+                } else if (selectedOptions[1] === "5-7 ครั้ง ต่อสัปดาห์") {
+                    if (selectedOptions[2] === "ใช่") {
+                        if (selectedOptions[3] === "ไม่ดื่มคาเฟอีนหรือแอลกอฮอล์เลย") {
+                            setResult(false)
+                        } else if (selectedOptions[3] === "ดื่มทุกวัน") {
+                            setResult(true)
+                        } else if (selectedOptions[3] === "รับประทานอาทิตย์ละครั้ง") {
+                            if (selectedOptions[4] === "ไม่มีเลย") {
+                                setResult(false);
+                            } else if (selectedOptions[4] === "1-3 ครั้ง" || selectedOptions[4] === "มากกว่า 3 ครั้ง") {
+                                setResult(true);
                             }
                         }
-                    } else if (selectedOptions[2] == "ไม่") {
-                        setResult("No");
+                    } else if (selectedOptions[2] === "ไม่") {
+                        setResult(false);
                     }
-                } else if (selectedOptions[1] == "รับประทานอาหารตรงเวลาเสมอ") {
-                    setResult("Yes");
+                } else if (selectedOptions[1] === "รับประทานอาหารตรงเวลาเสมอ") {
+                    setResult(true);
                 }
-            } else if (selectedOptions[0] == "ไม่ฉันไม่เคยปวดท้องตอนหิว") {
-                console.log(selectedOptions[0]);
-                setResult("No");
-                console.log("result = ", result);
+            } else if (selectedOptions[0] === "ไม่มีอาการเลย") {
+                setResult(false);
 
-            } else if (selectedOptions[0] == "ใช่ฉันเคยปวด") {
-                console.log(selectedOptions[0]);
-                setResult("Yes");
-                console.log("result = ", result);
+            } else if (selectedOptions[0] === "มีอาการ") {
+                setResult(true);
             }
-
-            console.log("result 5 = ", result);
-
-            Swal.fire({
-                title: "Good job!",
-                text: "You clicked the button!",
-                icon: "success",
-                showCancelButton: true,
-                cancelButtonText: "Back to home page!",
-
-            }).then((result) => {
-                if (result.dismiss) {
-                    router.push(`/`);
-                }
-            });
+            console.log("result 5 = ", results);
+            
         }
 
         if (id != "5") {
             router.push({
                 pathname: `/Routing/${questionData!.id + 1}`,
-                query: { id: `${questionData!.id + 1}`, answers: encodeURIComponent(selectedOptions.join(',')) }
+                query: { id: `${questionData!.id + 1}`, answers: encodeURIComponent(selectedOptions.join(',')) },
             });
         }
         const newProgressWidth = `${((selectedOptions.length + 1) / questions.length) * 100}%`;
@@ -126,11 +107,27 @@ export default function Quiz() {
                 setQuestionData(question);
             }
         }
-    }, [id, progressWidth]);
+    }, [id]);
+
+    useEffect(() => {
+        if (id === "5") {
+        if (results !== null) {
+            Swal.fire({
+                title: results ? `<img src = "/youuu.png" />` : `<img src = "/goodd-removebg.png" />`,
+                text: results ? "คุณเป็นโรคกระเพาะ" : "คุณไม่ได้เป็นโรคกระเพาะ",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    router.push(`/`);
+                }
+            });
+        }
+    }
+    }, [results]);
+
     return (
         <div className="w-screen h-screen overflow-hidden">
             <div className="w-full bg-gray-200 rounded-full h-6 dark:bg-gray-700" >
-                <div className="bg-green-500 h-6 rounded-full" style={{ width: progressWidth }}></div>
+                <div className="bg-green-500 h-6" style={{ width: progressWidth }}></div>
             </div>
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-8 w-full h-full bg-blue-200 p-4 lg:p-16">
                 <div className="bg-white p-4 shadow-lg rounded-lg flex items-center justify-center">
