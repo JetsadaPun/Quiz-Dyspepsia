@@ -7,8 +7,7 @@ function Homepage() {
 
     const handleClick = () => {
         router.push({
-            pathname: '/Routing/1',
-            query: { id: 1 }
+            pathname: '/Routing/Question',
         });
     };
 
