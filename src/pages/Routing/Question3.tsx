@@ -3,7 +3,7 @@ import { useAnswers } from '../components/AuthProvider';
 import router from 'next/router';
 import { useState } from 'react';
 
-export default function Question3() {
+const Question3 =() => {
     const { answers, setAnswers } = useAnswers();
     const [isMouseOver, setIsMouseOver] = useState<boolean>(false);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -63,4 +63,5 @@ export default function Question3() {
             </div>
         </div>
     )
-} 
+}
+export default Question3;
