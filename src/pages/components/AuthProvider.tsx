@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, ReactNode, useContext, useState } from "react";
 
 interface AuthContextType {
   answers: string[] | null;
@@ -24,8 +24,10 @@ export function AnswersProvider({ children }: { children: ReactNode }) {
     console.log("Clear answer"+answers);
   }
   return (
-    <AnswersContext.Provider value={{ answers, setAnswers,clearAnswers }}>
+    <AnswersContext.Provider value={{ answers, setAnswers, clearAnswers }}>
       {children}
     </AnswersContext.Provider>
   );
 }
+
+export default AnswersProvider; // เพิ่ม export default ที่นี่
